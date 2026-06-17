@@ -1,0 +1,22 @@
+services:
+  dreambot:
+    build: .
+    container_name: dreambot
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+      - TITLE=DreamBot
+      - PASSWORD=changeme
+    volumes:
+      - dreambot-data:/config
+    ports:
+      - "5800:3000"
+    shm_size: "1gb"
+    mem_limit: 4g
+    restart: unless-stopped
+
+volumes:
+  dreambot-data:

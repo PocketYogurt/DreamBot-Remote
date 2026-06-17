@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=DreamBot
+Exec=bash -c 'sleep 8 && java -jar /config/DreamBot/Launcher.jar'
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
