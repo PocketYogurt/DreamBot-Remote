@@ -1,6 +1,6 @@
-# DreamBot Web Appliance (self-contained build)
+# DreamBot Remote
 
-# DreamBot Web Appliance
+# Control your bot remotely!
 
 DreamBot running in a full Ubuntu desktop, accessed entirely through
 your browser. Java, the launcher, and autostart are baked into the
