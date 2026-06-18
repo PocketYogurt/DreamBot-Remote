@@ -1,4 +1,4 @@
-# DreamBot Web Appliance
+# DreamBot Remote
 
 DreamBot running in a full Ubuntu desktop, accessed entirely through
 your browser. Java, the launcher, and autostart are baked into the
