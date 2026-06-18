@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Start DreamBot
+Comment=Launch DreamBot if it has closed or crashed
+Exec=bash -c 'pgrep -f "DreamBot" > /dev/null || java -jar /config/DreamBot/Launcher.jar &'
+Icon=utilities-terminal
+Terminal=false
+X-GNOME-Autostart-enabled=false

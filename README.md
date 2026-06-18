@@ -1,5 +1,3 @@
-# DreamBot Web Appliance (self-contained build)
-
 # DreamBot Web Appliance
 
 DreamBot running in a full Ubuntu desktop, accessed entirely through
@@ -17,9 +15,11 @@ Running a full desktop sidesteps the whole problem.
 - `docker-compose.yml` — the service definition
 - `Dockerfile` — builds the image
 - `dreambot.desktop` — autostart entry that fires DreamBot on boot
-- `ensure-dreambot.sh` — re-checks the launcher's in place on every start, just in case
+- `start-dreambot.desktop` — desktop shortcut for manually relaunching DreamBot
+- `ensure-dreambot.sh` — re-checks the launcher's in place on every start, and starts the watchdog if crash protection is enabled
+- `watchdog.sh` — keeps DreamBot running if it ever crashes
 
-Keep all four next to each other — `docker compose build` needs them all in the same folder.
+Keep all five next to each other — `docker compose build` needs them all in the same folder. If you're cloning the repo, just `git clone` the whole thing rather than grabbing individual files; an old `docker-compose.yml` paired with a newer build (or vice versa) won't work properly.
 
 ## Setup
 
@@ -39,6 +39,20 @@ Log into your Jagex account through the launcher as you normally would — the b
 
 That's the whole setup. From now on, every restart or `docker compose up -d` brings DreamBot straight up with you logged in.
 
+## Crash protection
+
+If DreamBot crashes — a bad script, a hiccup in the login flow, anything — there's nothing bringing it back on its own unless you open the desktop and relaunch it manually.
+
+Set `CRASH_PROTECTION=true` in `docker-compose.yml` (it's on by default) and a watchdog checks every 30 seconds whether DreamBot's still running. If it's not, it relaunches it automatically. No need to touch the desktop at all.
+
+To turn it off, set it to `false` and rebuild.
+
+## Manual restart shortcut
+
+There's also a "Start DreamBot" icon on the desktop for relaunching it by hand — useful if you'd rather not run the watchdog, or just want a quick way to bring it back without opening a terminal. Double-clicking it does nothing if DreamBot's already running, so it's safe to click without checking first.
+
+The first time you use it, XFCE may ask whether to trust the shortcut — right-click it and choose "Allow Launching" (or just "Execute" depending on your XFCE version) if double-clicking doesn't do anything.
+
 ## Persistence
 
 Your DreamBot install, Jagex session, scripts and settings all live in the `dreambot-data` volume. They survive restarts and recreations — you only need to log into Jagex once.
@@ -54,6 +68,7 @@ A few other bits worth knowing:
 - `mem_limit: 4g` caps how much RAM the container can use. Adjust to whatever your host can spare.
 - Autostart comes from the `.desktop` file in `/config/.config/autostart/`, which XFCE reads on session start.
 - `ensure-dreambot.sh` runs on every boot and recreates the launcher/autostart file if either's missing. This covers an annoying edge case: if a volume already has a partially-built `.config` folder from before, the image's normal first-boot copy can skip filling in the rest.
+- `watchdog.sh` is a simple loop that checks every 30 seconds whether the launcher process is still alive, and restarts it if not. It only runs if `CRASH_PROTECTION=true`.
 
 ## Reinstalling the launcher
 

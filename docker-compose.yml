@@ -10,6 +10,7 @@ services:
       - TZ=Europe/London
       - TITLE=DreamBot
       - PASSWORD=changeme
+      - CRASH_PROTECTION=true
     volumes:
       - dreambot-data:/config
     ports:

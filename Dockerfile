@@ -4,7 +4,8 @@ FROM lscr.io/linuxserver/webtop:ubuntu-xfce
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         default-jre \
-        curl && \
+        curl \
+        procps && \
     rm -rf /var/lib/apt/lists/*
 
 # DreamBot launcher, placed in /defaults so it gets copied into /config on first boot
@@ -15,10 +16,19 @@ RUN mkdir -p /defaults/DreamBot && \
 RUN mkdir -p /defaults/.config/autostart
 COPY dreambot.desktop /defaults/.config/autostart/dreambot.desktop
 
+# Desktop shortcut for manually relaunching DreamBot
+RUN mkdir -p /defaults/Desktop
+COPY start-dreambot.desktop /defaults/Desktop/start-dreambot.desktop
+
+# Crash-protection watchdog
+COPY watchdog.sh /watchdog.sh
+RUN chmod +x /watchdog.sh
+
 # Belt-and-braces init script: runs on every container start (any LinuxServer
 # image executes everything in /custom-cont-init.d before the desktop starts)
 # and makes sure the launcher + autostart file exist and are owned correctly,
-# regardless of what state the mounted volume was already in.
+# regardless of what state the mounted volume was already in. Also starts
+# the watchdog if CRASH_PROTECTION=true.
 RUN mkdir -p /custom-cont-init.d
 COPY ensure-dreambot.sh /custom-cont-init.d/ensure-dreambot.sh
 RUN chmod +x /custom-cont-init.d/ensure-dreambot.sh
